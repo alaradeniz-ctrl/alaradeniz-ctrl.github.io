@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>alaradeniz</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#0a0908;
+  --surf:#111009;
+  --surf2:#181610;
+  --surf3:#1f1c14;
+  --text:#ddd6c8;
+  --muted:#6b6357;
+  --dim:#3a3530;
+  --acc:#8b1a2a;
+  --acc2:#5c0f1a;
+  --glow:rgba(139,26,42,0.12);
+  --brd:rgba(139,26,42,0.18);
+  --brd2:rgba(255,255,255,0.05);
+  --serif:"Playfair Display",Georgia,serif;
+  --sans:"DM Sans",sans-serif;
+  --mono:"DM Mono",monospace;
+}
+html,body{height:100%;overflow:hidden;}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:17px;font-weight:300;line-height:1.85;display:flex;flex-direction:column;}
+
+/* TOPBAR */
+#topbar{height:52px;background:var(--surf);border-bottom:1px solid var(--brd2);display:flex;align-items:center;padding:0 20px;flex-shrink:0;z-index:10;}
+.logo{font-family:var(--serif);font-size:15px;color:var(--acc);letter-spacing:0.1em;}
+.logo-right{margin-left:auto;}
+.logo a{color:var(--acc);text-decoration:none;transition:opacity .2s;}
+.logo a:hover{opacity:.7;}
+
+/* LAYOUT */
+#wrap{display:flex;flex:1;overflow:hidden;}
+
+/* SIDEBAR */
+#sidebar{width:260px;flex-shrink:0;background:var(--surf);border-right:1px solid var(--brd2);display:flex;flex-direction:column;overflow:hidden;}
+#sb-head{padding:16px 18px 12px;border-bottom:1px solid var(--brd2);flex-shrink:0;}
+#sb-head span{font-family:var(--mono);font-size:9px;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);}
+#sb-count{font-family:var(--mono);font-size:9px;color:var(--dim);margin-top:3px;}
+#entry-list{flex:1;overflow-y:auto;}
+#entry-list::-webkit-scrollbar{width:2px;}
+#entry-list::-webkit-scrollbar-thumb{background:var(--dim);}
+
+.eitem{padding:14px 18px;cursor:pointer;border-left:2px solid transparent;border-bottom:1px solid var(--brd2);transition:background .15s,border-color .15s;}
+.eitem:hover{background:var(--surf2);}
+.eitem.active{background:var(--surf2);border-left-color:var(--acc);}
+.eitem-title{font-family:var(--serif);font-size:13.5px;font-weight:400;color:var(--text);line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:4px;}
+.eitem.active .eitem-title{color:var(--acc);}
+.eitem-date{font-family:var(--mono);font-size:9.5px;color:var(--dim);letter-spacing:0.04em;}
+
+/* CONTENT */
+#content{flex:1;overflow-y:auto;display:flex;flex-direction:column;}
+#content::-webkit-scrollbar{width:3px;}
+#content::-webkit-scrollbar-thumb{background:var(--dim);}
+
+/* ENTRY VIEW */
+#view-entry{padding:52px 60px 80px;max-width:760px;width:100%;}
+.e-datebadge{font-family:var(--mono);font-size:9.5px;letter-spacing:0.15em;text-transform:uppercase;color:var(--acc);margin-bottom:18px;}
+.e-title{font-family:var(--serif);font-size:clamp(26px,4vw,42px);font-weight:400;line-height:1.15;letter-spacing:-.02em;color:var(--text);margin-bottom:40px;}
+.e-rule{border:none;border-top:1px solid var(--brd2);margin-bottom:36px;}
+.e-body{font-size:17px;line-height:1.85;font-weight:300;color:var(--text);}
+.e-body p{margin-bottom:20px;}
+.e-body h3{font-family:var(--serif);font-size:19px;font-weight:400;font-style:italic;color:var(--text);margin:38px 0 14px;}
+.e-body blockquote{border-left:2px solid var(--acc);padding:4px 0 4px 22px;margin:28px 0;font-family:var(--serif);font-style:italic;font-size:18px;color:var(--muted);}
+</style>
+</head>
+<body>
+
+<div id="topbar">
+  <div class="logo">alaradeniz</div>
+  <div class="logo logo-right"><a href="https://www.youtube.com/@VideoDiaries-wg7sr" target="_blank">video</a></div>
+</div>
+
+<div id="wrap">
+  <div id="sidebar">
+    <div id="sb-head">
+      <span>All Entries</span>
+      <div id="sb-count">3 entries</div>
+    </div>
+    <div id="entry-list"></div>
+  </div>
+
+  <div id="content">
+    <div id="view-entry"></div>
+  </div>
+</div>
+
+<script>
+const entries = [
+  {
+    id: 'e-003',
+    title: 'The Questions I Was Always Going to Ask',
+    date: '2026-05-21',
+    body: `
+      <p>Four days into reading the Bible consecutively and already every session sends me down a rabbit hole I can't climb out of. An existential crisis every day, but the expansive kind. The kind that feels like something opening rather than collapsing. For the first time in a long time I feel like I can actually think clearly. Like I can finally ask the questions I've always wanted to ask, always needed to ask, and genuinely love to ask. There's a safety in it I wasn't expecting. I follow every question wherever it goes. That's just how I understand things for myself.</p>
+
+      <h3>The Resurrection and the Awkward Details</h3>
+      <p>It started with a fishing scene. John 21. Jesus appears after the resurrection and his own disciples hesitate to ask who he is. That stopped me immediately. These were his closest people. Why didn't they recognise him?</p>
+      <p>If this happened today those people would end up in a psych ward. A man they watched die, back again, looking different enough to question but somehow unmistakably him. Mary thought he was a gardener. The disciples held back from asking who he was. They just knew, without being able to say how.</p>
+      <p>A skeptic reads that and says: they saw a stranger and convinced themselves.</p>
+      <p>But here's what caught my attention. If you're fabricating a resurrection story you don't write it this way. You make him glorious and instantly recognisable. You don't include the awkward parts, where people don't immediately understand him. The embarrassing details are exactly what you'd cut from an invented story, which makes the presence of them interesting.</p>
+      <p>Not proof. But enough to keep reading.</p>
+
+      <h3>What Was Jesus Actually Saying?</h3>
+      <p>Reading Jesus more carefully, I don't think his message is primarily love and light in the soft modern sense. It's not really ethics either. It feels stranger and more specific than both. It feels like an invitation.</p>
+      <p>His own words make that plain:</p>
+      <p><i>"Come to me, all you who are weary and burdened, and I will give you rest."</i> Matthew 11:28</p>
+      <p><i>"I am the way, the truth, and the life."</i> John 14:6</p>
+      <p><i>"My kingdom is not of this world."</i> John 18:36</p>
+      <p><i>"Do not let your hearts be troubled. My Father's house has many rooms. I am going there to prepare a place for you."</i> John 14:1-2</p>
+      <p><i>"I am the bread of life. Whoever comes to me will never go hungry."</i> John 6:35</p>
+      <p>That's not a moral teacher laying out rules. That's someone saying come with me. You are not yet home. There is somewhere else and I know the way there. Like family calling you back late at night.</p>
+
+      <h3>The People Who Believed It Most</h3>
+      <p>What's harder to reconcile is what happened to the people who accepted that invitation.</p>
+      <p>Peter, crucified upside down. Paul, beheaded. Stephen, stoned. James, killed by sword. These weren't people who found pure comfort and joy and lived well. They suffered enormously. And yet they didn't walk away.</p>
+      <p>That raises a genuine question I don't have an answer to. What did they know or feel or experience that made it worth that? Plenty of people die for wrong things. But something clearly happened to these specific people that reoriented them completely. Whatever it was, it wasn't a comforting philosophy. It was something they found worth everything. I'm still sitting with what that means.</p>
+
+      <h3>The Judas Problem</h3>
+      <p>Then came Judas. And this is where I've had to sit with genuine discomfort I haven't been able to resolve.</p>
+      <p>The theology says anyone can be saved. No sin is too great. Grace is available to everyone. But then you read Acts 1:25, that Judas fell by transgression and went to his own place. That phrase quietly implies damnation. So already the anyone can be saved claim has a visible exception built into it.</p>
+      <p>Jesus didn't just hint at the betrayal. He stated it as certainty. Multiple times. One of you will betray me. Not might. Will. And then he identified Judas directly. He knew exactly who and exactly when. Judas expressed remorse. He threw the money back. But apparently remorse wasn't enough. He wasn't saved.</p>
+
+      <h3>The Cross Is Not a Detail</h3>
+      <p>And here's what broke the logic entirely for me.</p>
+      <p>To follow Jesus means believing that Jesus died on the cross and saved humanity. That is the central thing. It's why systems like A Course in Miracles feel so wrong despite claiming to be about Jesus. A Course in Miracles was dictated by a woman who claimed Jesus was speaking through her, but it redefines the crucifixion as merely a teaching device, strips it of its salvific meaning entirely, and explicitly rejects the idea that sacrifice or death accomplished anything. It keeps the Christian language but empties it of the thing that makes Christianity what it is. The cross is not a detail. It is the entire point.</p>
+      <p>From the day Judas was born, was he set to betray Jesus and go to hell for the good of all of mankind? Was that his entire purpose, to be the person through whom salvation entered the world, and to be damned for it? And if Judas had never been born, would Jesus have lived a long life? Would the crucifixion never have happened? Would salvation never have existed? Would this world, which the Bible itself frequently describes as Satan's realm, have remained exactly as it is forever?</p>
+
+      <h3>Why Did He Have to Die</h3>
+      <p>These questions led me somewhere I still haven't resolved.</p>
+      <p>Why did Jesus have to die specifically for us to be saved?</p>
+      <p>Christianity teaches that humanity sinned. Going back to Genesis, Adam and Eve broke the one instruction God gave them, and that moment fractured something in human nature itself. Not just two people disobeying but something in the human condition becoming bent toward selfishness and separation from God. Every human born after inherits that broken nature. That's original sin.</p>
+      <p>Which led me to a question I can't shake. If we were all already separated from God, already in some sense lost, maybe Jesus coming was less about teaching and more about breaking us out. Like someone arriving and saying I know the way, follow me, there is a way through this. The invitation makes more sense in that frame. Not come and feel better. Come and be freed.</p>
+      <p>But that still leaves the hardest question unanswered. Why did the freeing specifically require his death? Why couldn't he simply live, teach, and save through his presence alone?</p>
+      <p>The Church's main answer is substitutionary atonement. Sin requires a penalty. Jesus took that penalty in our place. Blood sacrifice was the established mechanism in Jewish law going back centuries, and Jesus became the final complete version of it. But that raises its own uncomfortable question. Why couldn't God simply forgive? Why does justice require blood? It makes God sound bound by a legal system of his own creation.</p>
+      <p>There are other answers. Some say Jesus died to defeat death from the inside, entering it and coming out the other side broke its power entirely. Others say the cross was simply what happens when radical truth enters a broken world, inevitable rather than required. Some argue the incarnation itself was the point and the cross was what the world did to him.</p>
+      <p>The Bible doesn't give one clean answer. This is the elephant in the room I haven't been able to get past. Not because it makes me disbelieve. But because the question feels too important to paper over.</p>
+
+      <h3>The Bread Theory of Time</h3>
+      <p>This line of thinking led me into a concept from physics that genuinely stopped me.</p>
+      <p>The bread theory of time, known in physics as the Block Universe or Eternalism, is a concept from Einstein's Theory of General Relativity. The idea is that the Big Bang didn't just create matter and space but all of time simultaneously. Every moment already exists, fixed and complete, from beginning to end. We experience it one slice at a time, consciousness moving through something already whole. Einstein wrote that the distinction between past, present and future is only a stubbornly persistent illusion.</p>
+      <p>My usual conclusion, the one I find most intellectually comfortable, is infinite realities. Branching timelines. Free will preserved because every choice opens new worlds. That framework has always felt most familiar and comforting to me.</p>
+      <p>But the Judas thread pulled me somewhere unfamiliar. If Jesus knew with certainty, not probability but certainty, then maybe there are no branches. Maybe it is just one loaf. Fixed. Predetermined. And for once I found myself genuinely sitting with that rather than reaching for the familiar infinity route.</p>
+
+      <h3>What Is Faith Then</h3>
+      <p>And if that's true then everything unravels further. If time is fixed and free will doesn't exist, what is faith? What is the point of religious people hell bent on spreading the message of the Lord? What is the point of life itself if the outcome was always already written?</p>
+      <p>If it's all fixed, faith isn't a choice at all. Maybe it can be explained like the laws of nature. Seeds carried by wind. Some land and take root. Some don't. Not because of merit or worth. Just conditions. Timing. Circumstance.</p>
+      <p>Like in the analogy Jesus uses, The Parable of the Sower.</p>
+      <p>A farmer scatters seeds. They land in different places. Some get eaten by birds. Some sprout but wither because the soil is too shallow. Some get choked by weeds. Some grow.</p>
+
+      <h3>A Break in the System</h3>
+      <p>Classical physics said the universe was mechanical and predictable. Fixed laws. Every cause producing a predetermined effect. If you knew the position of every particle at any moment you could calculate everything that would ever happen. A closed system. Deterministic all the way down.</p>
+      <p>Then quantum physics broke that entirely. Not from outside the system but from within it. At the deepest level things don't behave the way classical physics said they should. Particles exist in multiple states simultaneously. Certainty collapses into probability. The rules that seemed absolute turned out to be surface level descriptions of something far stranger underneath.</p>
+      <p>Maybe Jesus is something like that moment. Not someone entering a fixed story from outside to change it. But the point where the system reveals it was never as closed as it appeared. Where the deterministic surface cracks and something underneath comes through. (This feels like a weak point but a point it is so I am leaving it in). I feel some relation between classical physics, quantum physics, predeterminism, and infinite realities that I can't fully articulate YET.</p>
+      <p><i>"Before Abraham was, I am."</i> John 8:58</p>
+      <p><i>"It is finished."</i> John 19:30</p>
+      <p>Before Abraham was, I am. Not I was. Present tense across all time.</p>
+      <p>It is finished. Said on the cross before Christianity had even begun.</p>
+      <p>Let not your heart be troubled. Said by someone seeing the whole loaf at once.</p>
+
+      <h3>Day Four</h3>
+      <p>I don't have a clean conclusion. The Judas problem doesn't resolve. The question of why death was necessary stays open. Whether faith is chosen or simply happens remains genuinely unclear to me.</p>
+      <p>But every time I open this text something settles in me. I feel better. I think more clearly. I feel safe in a way that's hard to explain. Like I've been given permission to ask every question I've always wanted to ask and follow it all the way down without flinching.</p>
+      <p>That's not nothing and it feels like everything.</p>
+    `
+  },
+  {
+    id: 'e-002',
+    title: 'What Happens When We Die, And Why I Started Asking',
+    date: '2026-05-19',
+    body: `<p>This entry is coming soon.</p>`
+  },
+  {
+    id: 'e-001',
+    title: 'Faith, Suffering and the Mechanics of Consciousness',
+    date: '2025-01-01',
+    body: `<p>This entry is coming soon.</p>`
+  }
+];
+
+function formatDate(dateStr) {
+  const d = new Date(dateStr + 'T12:00:00');
+  return d.toLocaleDateString('en-GB', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
+}
+
+function formatDateShort(dateStr) {
+  const d = new Date(dateStr + 'T12:00:00');
+  return d.toLocaleDateString('en-GB', {day:'numeric', month:'short', year:'numeric'});
+}
+
+function renderSidebar(activeId) {
+  document.getElementById('entry-list').innerHTML = entries.map(e => `
+    <div class="eitem ${e.id === activeId ? 'active' : ''}" onclick="openEntry('${e.id}')">
+      <div class="eitem-title">${e.title}</div>
+      <div class="eitem-date">${formatDateShort(e.date)}</div>
+    </div>
+  `).join('');
+}
+
+function openEntry(id) {
+  const e = entries.find(x => x.id === id);
+  if (!e) return;
+  document.getElementById('view-entry').innerHTML = `
+    <div class="e-datebadge">${formatDate(e.date)}</div>
+    <div class="e-title">${e.title}</div>
+    <hr class="e-rule">
+    <div class="e-body">${e.body}</div>
+  `;
+  document.getElementById('content').scrollTop = 0;
+  renderSidebar(id);
+}
+
+renderSidebar(entries[0].id);
+openEntry(entries[0].id);
+</script>
+</body>
+</html>
